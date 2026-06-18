@@ -6,14 +6,14 @@
   "secret": "CHANGE_ME",
   "logFile": "/home/seyacat/cc-deploy/deploy.log",
   "repos": {
-    "dotrino/simple-websocket-proxy": {
+    "imdotrino/dotrino-proxy": {
       "dir": "/home/seyacat/simple-websocket-proxy",
       "branch": "main",
       "pm2": "cc-proxy",
       "npm": "ci",
       "healthUrl": "http://127.0.0.1:4001/health"
     },
-    "dotrino/dotrino-signer": {
+    "imdotrino/dotrino-signer": {
       "_nota": "el signer lo supervisa PM2 (no systemd); se reinicia por pm2, sin sudo. El repo fue transferido seyacat→dotrino; el payload usa el full_name actual.",
       "dir": "/home/seyacat/dotrino-signer",
       "branch": "main",

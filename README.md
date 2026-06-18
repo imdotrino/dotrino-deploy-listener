@@ -36,7 +36,7 @@ checkout local.
 ## Instalar en un host
 
 ```bash
-git clone https://github.com/imdotrino/cc-deploy-listener.git ~/cc-deploy-listener
+git clone https://github.com/imdotrino/dotrino-deploy-listener.git ~/cc-deploy-listener
 cd ~/cc-deploy-listener
 cp deploy.config.proxy1.example.json deploy.config.json   # o proxy2
 # editá deploy.config.json: poné un `secret` fuerte y ajustá dir/branch/unit
@@ -62,7 +62,7 @@ host. Validá con `sudo visudo -cf /etc/sudoers.d/cc-deploy`.
 Por cada repo que despliega el host (con la cuenta `dotrino`):
 
 ```bash
-gh api -X POST repos/dotrino/simple-websocket-proxy/hooks \
+gh api -X POST repos/imdotrino/dotrino-proxy/hooks \
   -f name=web -F active=true -f 'events[]=push' \
   -f config[url]=https://proxy.dotrino.com/hooks/deploy \
   -f config[content_type]=json \
@@ -80,11 +80,11 @@ El listener responde `200 {pong:true}` al ping y `202 {queued:true}` al push.
 
 | Servicio | Host | Repo | Restart | Listo para CD |
 |---|---|---|---|---|
-| proxy | proxy.dotrino.com | dotrino/simple-websocket-proxy (main) | pm2 `cc-proxy` | ✅ |
-| proxy2 | proxy2.dotrino.com | dotrino/simple-websocket-proxy (main) | pm2 `cc-proxy2` | ✅ |
-| signer | proxy.dotrino.com | dotrino/dotrino-signer (main) | pm2 `dotrino-signer` | ✅ |
-| geo | proxy2.dotrino.com | dotrino/dotrino-geo | systemd `dotrino-geo` | ⚠️ `~/dotrino-geo` no es checkout git |
-| reputation | proxy2.dotrino.com | dotrino/dotrino-reputation | systemd `dotrino-reputation` | ⚠️ idem geo |
+| proxy | proxy.dotrino.com | imdotrino/dotrino-proxy (main) | pm2 `cc-proxy` | ✅ |
+| proxy2 | proxy2.dotrino.com | imdotrino/dotrino-proxy (main) | pm2 `cc-proxy2` | ✅ |
+| signer | proxy.dotrino.com | imdotrino/dotrino-signer (main) | pm2 `dotrino-signer` | ✅ |
+| geo | proxy2.dotrino.com | imdotrino/dotrino-geo | systemd `dotrino-geo` | ⚠️ `~/dotrino-geo` no es checkout git |
+| reputation | proxy2.dotrino.com | imdotrino/dotrino-reputation | systemd `dotrino-reputation` | ⚠️ idem geo |
 
 Todos los servicios en CD hoy corren bajo **PM2** → el listener reinicia con `pm2
 restart` (sin sudo). geo/reputation siguen en systemd y aún no están en CD; al

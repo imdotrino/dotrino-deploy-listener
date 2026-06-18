@@ -6,14 +6,14 @@
   "secret": "CHANGE_ME",
   "logFile": "/home/seyacat/cc-deploy/deploy.log",
   "repos": {
-    "dotrino/simple-websocket-proxy": {
+    "imdotrino/dotrino-proxy": {
       "dir": "/home/seyacat/proxy2",
       "branch": "main",
       "pm2": "cc-proxy2",
       "npm": "ci",
       "healthUrl": "http://127.0.0.1:4001/health"
     },
-    "dotrino/dotrino-geo": {
+    "imdotrino/dotrino-geo": {
       "_nota": "repo root ~/dotrino-geo; la app vive en server/ (package.json+node_modules+.env ahí). dir=server: git opera sobre el repo (sube al .git) y npm corre donde están las deps.",
       "dir": "/home/seyacat/dotrino-geo/server",
       "branch": "master",
@@ -21,7 +21,7 @@
       "npm": "ci",
       "healthUrl": "http://127.0.0.1:8090/health"
     },
-    "dotrino/dotrino-reputation": {
+    "imdotrino/dotrino-reputation": {
       "dir": "/home/seyacat/dotrino-reputation/server",
       "branch": "main",
       "pm2": "dotrino-reputation",
