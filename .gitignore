@@ -1,0 +1,9 @@
+deploy.config.json
+*.log
+node_modules/
+cc-deploy/
+node_modules
+dist
+build
+.env
+.DS_Store

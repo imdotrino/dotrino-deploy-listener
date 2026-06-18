@@ -1,0 +1,18 @@
+[Unit]
+Description=Dotrino deploy listener (webhook CD)
+After=network.target
+
+[Service]
+Type=simple
+User=seyacat
+WorkingDirectory=/home/seyacat/cc-deploy-listener
+Environment=CC_DEPLOY_CONFIG=/home/seyacat/cc-deploy-listener/deploy.config.json
+# node por nvm: ajustá la versión si cambia. ExecStart con ruta absoluta para no
+# depender del PATH del login shell.
+ExecStart=/home/seyacat/.nvm/versions/node/v24.15.0/bin/node server.js
+Restart=always
+RestartSec=3
+SyslogIdentifier=cc-deploy
+
+[Install]
+WantedBy=multi-user.target

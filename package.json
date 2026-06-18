@@ -1,0 +1,10 @@
+{
+  "name": "cc-deploy-listener",
+  "version": "0.1.0",
+  "description": "Webhook de deploy continuo del ecosistema Dotrino (git pull + systemctl restart, sin dependencias).",
+  "license": "MIT",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

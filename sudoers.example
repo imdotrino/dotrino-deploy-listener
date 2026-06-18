@@ -1,0 +1,14 @@
+# /etc/sudoers.d/cc-deploy  (instalar con: sudo visudo -f /etc/sudoers.d/cc-deploy)
+# Permite al listener (corriendo como seyacat) reiniciar SOLO los units de deploy,
+# sin contraseña. NO da sudo general. Ajustá la lista de units por host.
+#
+# proxy.dotrino.com:
+seyacat ALL=(root) NOPASSWD: /usr/bin/systemctl restart cc-proxy
+# seyacat ALL=(root) NOPASSWD: /usr/bin/systemctl restart cc-signer
+#
+# proxy2.dotrino.com:
+# seyacat ALL=(root) NOPASSWD: /usr/bin/systemctl restart cc-proxy2
+# seyacat ALL=(root) NOPASSWD: /usr/bin/systemctl restart dotrino-geo
+# seyacat ALL=(root) NOPASSWD: /usr/bin/systemctl restart dotrino-reputation
+#
+# Verificá la ruta de systemctl con: command -v systemctl  (suele ser /usr/bin/systemctl).

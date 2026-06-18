@@ -1,0 +1,32 @@
+{
+  "_comment": "Config para el host proxy2.dotrino.com (VPS multi-servicio). Copiala a deploy.config.json y poné un secret real.",
+  "host": "127.0.0.1",
+  "port": 9099,
+  "path": "/hooks/deploy",
+  "secret": "CHANGE_ME",
+  "logFile": "/home/seyacat/cc-deploy/deploy.log",
+  "repos": {
+    "dotrino/simple-websocket-proxy": {
+      "dir": "/home/seyacat/proxy2",
+      "branch": "main",
+      "pm2": "cc-proxy2",
+      "npm": "ci",
+      "healthUrl": "http://127.0.0.1:4001/health"
+    },
+    "dotrino/dotrino-geo": {
+      "_nota": "repo root ~/dotrino-geo; la app vive en server/ (package.json+node_modules+.env ahí). dir=server: git opera sobre el repo (sube al .git) y npm corre donde están las deps.",
+      "dir": "/home/seyacat/dotrino-geo/server",
+      "branch": "master",
+      "pm2": "dotrino-geo",
+      "npm": "ci",
+      "healthUrl": "http://127.0.0.1:8090/health"
+    },
+    "dotrino/dotrino-reputation": {
+      "dir": "/home/seyacat/dotrino-reputation/server",
+      "branch": "main",
+      "pm2": "dotrino-reputation",
+      "npm": "ci",
+      "healthUrl": "http://127.0.0.1:8091/health"
+    }
+  }
+}
