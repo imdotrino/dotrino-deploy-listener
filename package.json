@@ -5,6 +5,11 @@
   "license": "MIT",
   "type": "commonjs",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "^22.0.0"
   }
 }
