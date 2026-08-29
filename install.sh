@@ -2,7 +2,7 @@
 # Instalador idempotente del listener en un host. Corré desde el repo clonado:
 #   bash install.sh
 # Requiere: tener deploy.config.json ya editado (con secret real) en este dir.
-# Los pasos con sudo se imprimen al final para que los corras vos (no embebemos
+# Los pasos con sudo se imprimen al final para que los corras tú (no embebemos
 # la contraseña). No reinicia nada de producción.
 set -euo pipefail
 
@@ -10,7 +10,7 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 NODE_BIN="$(command -v node || echo /home/seyacat/.nvm/versions/node/v24.15.0/bin/node)"
 
 if [[ ! -f "$DIR/deploy.config.json" ]]; then
-  echo "❌ Falta $DIR/deploy.config.json — copiá un deploy.config.*.example.json y editá el secret."
+  echo "❌ Falta $DIR/deploy.config.json — copia un deploy.config.*.example.json y edita el secret."
   exit 1
 fi
 
@@ -34,9 +34,9 @@ sed -e "s#/home/seyacat/cc-deploy-listener#$DIR#g" \
 echo
 echo "✅ Listo el unit generado: $UNIT_OUT"
 echo
-echo "Ahora corré estos pasos con sudo (revisá la lista de units en sudoers.example):"
+echo "Ahora corre estos pasos con sudo (revisa la lista de units en sudoers.example):"
 echo "  sudo cp $UNIT_OUT /etc/systemd/system/cc-deploy.service"
-echo "  sudo cp $DIR/sudoers.example /etc/sudoers.d/cc-deploy   # editá los units por host"
+echo "  sudo cp $DIR/sudoers.example /etc/sudoers.d/cc-deploy   # edita los units por host"
 echo "  sudo visudo -cf /etc/sudoers.d/cc-deploy                # validar sintaxis"
 echo "  sudo systemctl daemon-reload && sudo systemctl enable --now cc-deploy"
 echo "  systemctl status cc-deploy --no-pager"

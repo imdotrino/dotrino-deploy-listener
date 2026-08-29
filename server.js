@@ -28,7 +28,7 @@ const CONFIG_PATH = process.env.CC_DEPLOY_CONFIG || './deploy.config.json';
 
 function loadConfig() {
   const cfg = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
-  if (!cfg.secret || cfg.secret === 'CHANGE_ME') throw new Error('config.secret faltante o sin cambiar');
+  if (!cfg.secret || cfg.secret === 'CHANGE_ME') throw new Error('config.secret missing or left at the default');
   if (!cfg.repos || typeof cfg.repos !== 'object') throw new Error('config.repos faltante');
   cfg.port = cfg.port || 9099;
   cfg.host = cfg.host || '127.0.0.1';
@@ -69,7 +69,7 @@ function bashlc(script, cwd) {
 }
 
 async function deploy(name, r) {
-  if (!r.dir || !r.branch) throw new Error(`repo ${name} sin dir/branch`);
+  if (!r.dir || !r.branch) throw new Error(`repo ${name} has no dir/branch`);
   log(`deploy ${name} → ${r.dir} (branch ${r.branch}${r.unit ? ', unit ' + r.unit : ''})`);
   await bashlc(`git fetch origin ${r.branch}`, r.dir);
   await bashlc(`git reset --hard origin/${r.branch}`, r.dir);
@@ -108,7 +108,7 @@ const server = http.createServer((req, res) => {
   req.on('end', () => {
     const raw = Buffer.concat(chunks);
     if (!validSignature(raw, req.headers['x-hub-signature-256'])) {
-      log(`rechazado: firma inválida (${req.socket.remoteAddress})`);
+      log(`rejected: invalid signature (${req.socket.remoteAddress})`);
       return reply(401, { error: 'invalid signature' });
     }
     const event = req.headers['x-github-event'];
@@ -136,6 +136,6 @@ server.listen(cfg.port, cfg.host, () => {
 // Recarga de config con SIGHUP (sin reiniciar el servicio).
 process.on('SIGHUP', () => {
   try { cfg = loadConfig(); log('config recargada (SIGHUP)'); }
-  catch (e) { log(`recarga de config falló: ${e.message}`); }
+  catch (e) { log(`config reload failed: ${e.message}`); }
 });
 process.on('SIGTERM', () => { log('SIGTERM, saliendo'); server.close(() => process.exit(0)); setTimeout(() => process.exit(0), 2000); });
