@@ -130,7 +130,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(cfg.port, cfg.host, () => {
-  log(`cc-deploy-listener escuchando en http://${cfg.host}:${cfg.port}${cfg.path} — repos: ${Object.keys(cfg.repos).join(', ')}`);
+  log(`cc-deploy-listener listening on http://${cfg.host}:${cfg.port}${cfg.path} — repos: ${Object.keys(cfg.repos).join(', ')}`);
 });
 
 // Recarga de config con SIGHUP (sin reiniciar el servicio).

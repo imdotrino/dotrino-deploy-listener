@@ -41,4 +41,4 @@ echo "  sudo visudo -cf /etc/sudoers.d/cc-deploy                # validar sintax
 echo "  sudo systemctl daemon-reload && sudo systemctl enable --now cc-deploy"
 echo "  systemctl status cc-deploy --no-pager"
 echo
-echo "Y agregá el location de nginx.example.conf al server{} del dominio + reload nginx."
+echo "Y agrega el location de nginx.example.conf al server{} del dominio + reload nginx."
