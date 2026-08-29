@@ -29,7 +29,7 @@ const CONFIG_PATH = process.env.CC_DEPLOY_CONFIG || './deploy.config.json';
 function loadConfig() {
   const cfg = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
   if (!cfg.secret || cfg.secret === 'CHANGE_ME') throw new Error('config.secret missing or left at the default');
-  if (!cfg.repos || typeof cfg.repos !== 'object') throw new Error('config.repos faltante');
+  if (!cfg.repos || typeof cfg.repos !== 'object') throw new Error('config.repos is missing');
   cfg.port = cfg.port || 9099;
   cfg.host = cfg.host || '127.0.0.1';
   cfg.path = cfg.path || '/hooks/deploy';
