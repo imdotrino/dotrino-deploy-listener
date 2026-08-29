@@ -78,7 +78,7 @@ async function deploy(name, r) {
   // declara `unit` (systemd) o `pm2` (nombre de la app pm2), no ambos.
   if (r.pm2) await bashlc(`pm2 restart ${r.pm2}`, r.dir);
   else if (r.unit) await run('sudo', ['-n', 'systemctl', 'restart', r.unit]);
-  const how = r.pm2 ? 'pm2 restart ' + r.pm2 : r.unit ? 'restarted ' + r.unit : 'sin restart';
+  const how = r.pm2 ? 'pm2 restart ' + r.pm2 : r.unit ? 'restarted ' + r.unit : 'no restart';
   log(`deploy ${name} OK (${how})`);
   if (r.healthUrl) {
     try { await bashlc(`curl -fsS -m 8 ${r.healthUrl} >/dev/null`, r.dir); log(`health ${name} OK`); }
@@ -120,11 +120,11 @@ const server = http.createServer((req, res) => {
     const repoName = payload.repository && payload.repository.full_name;
     const ref = payload.ref;
     const r = repoName && cfg.repos[repoName];
-    if (!r) return reply(202, { ignored: 'repo no configurado', repo: repoName });
-    if (ref !== `refs/heads/${r.branch}`) return reply(202, { ignored: 'rama no desplegada', ref });
+    if (!r) return reply(202, { ignored: 'repo not configured', repo: repoName });
+    if (ref !== `refs/heads/${r.branch}`) return reply(202, { ignored: 'branch not deployed', ref });
 
     enqueue(repoName, () => deploy(repoName, r));
-    log(`encolado deploy ${repoName} (${ref})`);
+    log(`queued deploy ${repoName} (${ref})`);
     return reply(202, { queued: true, repo: repoName });
   });
 });
@@ -135,7 +135,7 @@ server.listen(cfg.port, cfg.host, () => {
 
 // Recarga de config con SIGHUP (sin reiniciar el servicio).
 process.on('SIGHUP', () => {
-  try { cfg = loadConfig(); log('config recargada (SIGHUP)'); }
+  try { cfg = loadConfig(); log('config reloaded (SIGHUP)'); }
   catch (e) { log(`config reload failed: ${e.message}`); }
 });
-process.on('SIGTERM', () => { log('SIGTERM, saliendo'); server.close(() => process.exit(0)); setTimeout(() => process.exit(0), 2000); });
+process.on('SIGTERM', () => { log('SIGTERM, shutting down'); server.close(() => process.exit(0)); setTimeout(() => process.exit(0), 2000); });
