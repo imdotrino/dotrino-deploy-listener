@@ -15,10 +15,11 @@
     },
     "imdotrino/dotrino-signer": {
       "_nota": "el signer lo supervisa PM2 (no systemd); se reinicia por pm2, sin sudo. El repo fue transferido seyacat→dotrino; el payload usa el full_name actual.",
-      "dir": "/home/seyacat/dotrino-signer",
+      "dir": "/home/seyacat/closer-click-signer",
       "branch": "main",
-      "pm2": "dotrino-signer",
+      "pm2": "closer-click-signer",
       "npm": "ci"
     }
-  }
+  },
+  "_verificado": "Copiado de la config REAL del VPS el 2026-09-20. Estaba desfasado — geo decía `master` (la rama es `main`) y el signer apuntaba a un dir y un pm2 que no existen —, y casi hace concluir que geo no se desplegaba cuando sí lo hacía. Si cambias el VPS, cambia esto."
 }

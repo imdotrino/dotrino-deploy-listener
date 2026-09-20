@@ -15,18 +15,19 @@
     },
     "imdotrino/dotrino-geo": {
       "_nota": "repo root ~/dotrino-geo; la app vive en server/ (package.json+node_modules+.env ahí). dir=server: git opera sobre el repo (sube al .git) y npm corre donde están las deps.",
-      "dir": "/home/seyacat/dotrino-geo/server",
-      "branch": "master",
-      "pm2": "dotrino-geo",
+      "dir": "/home/seyacat/closer-click-geo/server",
+      "branch": "main",
+      "pm2": "closer-click-geo",
       "npm": "ci",
       "healthUrl": "http://127.0.0.1:8090/health"
     },
     "imdotrino/dotrino-reputation": {
-      "dir": "/home/seyacat/dotrino-reputation/server",
+      "dir": "/home/seyacat/closer-click-reputation/server",
       "branch": "main",
-      "pm2": "dotrino-reputation",
+      "pm2": "closer-click-reputation",
       "npm": "ci",
       "healthUrl": "http://127.0.0.1:8091/health"
     }
-  }
+  },
+  "_verificado": "Copiado de la config REAL del VPS el 2026-09-20. Estaba desfasado — geo decía `master` (la rama es `main`) y el signer apuntaba a un dir y un pm2 que no existen —, y casi hace concluir que geo no se desplegaba cuando sí lo hacía. Si cambias el VPS, cambia esto."
 }
