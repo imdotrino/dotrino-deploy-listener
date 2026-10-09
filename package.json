@@ -9,7 +9,10 @@
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
-    "typescript": "5.9.3",
-    "@types/node": "^22.0.0"
+    "@types/node": "^22.0.0",
+    "typescript": "5.9.3"
+  },
+  "dependencies": {
+    "@dotrino/update": "0.7.0"
   }
 }

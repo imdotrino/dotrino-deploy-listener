@@ -131,6 +131,11 @@ const server = http.createServer((req, res) => {
 
 server.listen(cfg.port, cfg.host, () => {
   log(`cc-deploy-listener listening on http://${cfg.host}:${cfg.port}${cfg.path} — repos: ${Object.keys(cfg.repos).join(', ')}`);
+  // §15: no usa pilares, así que lo que se le queda atrás es el checkout. Justo este servicio
+  // corría en los dos VPS una copia de junio que no era un clon de git, y nadie lo veía.
+  import('@dotrino/update/checkout')
+    .then(({ watchCheckout }) => watchCheckout({ dir: __dirname, repo: 'imdotrino/dotrino-deploy-listener', name: 'deploy-listener', log }))
+    .catch((e) => log(`[update] could not start the watch: ${e.code || e.message}`));
 });
 
 // Recarga de config con SIGHUP (sin reiniciar el servicio).
