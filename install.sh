@@ -20,8 +20,8 @@ mkdir -p "$HOME/cc-deploy"
 echo "🔎 Validando config…"
 CC_DEPLOY_CONFIG="$DIR/deploy.config.json" "$NODE_BIN" -e '
   const c=require(process.env.CC_DEPLOY_CONFIG);
-  if(!c.secret||c.secret==="CHANGE_ME")throw new Error("secret sin cambiar");
-  if(!c.repos||!Object.keys(c.repos).length)throw new Error("sin repos");
+  if(!c.secret||c.secret==="CHANGE_ME")throw new Error("config.secret missing or left at the default");
+  if(!c.repos||!Object.keys(c.repos).length)throw new Error("config.repos is empty");
   console.log("   ok — repos:",Object.keys(c.repos).join(", "));
 '
 
