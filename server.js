@@ -26,6 +26,25 @@ const fs = require('fs');
 
 const CONFIG_PATH = process.env.CC_DEPLOY_CONFIG || './deploy.config.json';
 
+/**
+ * @typedef {object} RepoConfig
+ * @property {string} dir       checkout en disco
+ * @property {string} branch    rama que se despliega
+ * @property {string} [npm]     argumentos de `npm` tras el pull (p. ej. `ci --omit=dev`)
+ * @property {string} [unit]    unit de systemd a reiniciar
+ * @property {string} [pm2]     app de pm2 a reiniciar
+ * @property {string} [healthUrl]
+ *
+ * @typedef {object} DeployConfig
+ * @property {string} secret
+ * @property {Record<string, RepoConfig>} repos
+ * @property {number} port
+ * @property {string} host
+ * @property {string} path
+ * @property {string} [logFile]
+ */
+
+/** @returns {DeployConfig} */
 function loadConfig() {
   const cfg = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
   if (!cfg.secret || cfg.secret === 'CHANGE_ME') throw new Error('config.secret missing or left at the default');
@@ -39,6 +58,7 @@ function loadConfig() {
 let cfg = loadConfig();
 
 function ts() { return new Date().toISOString(); }
+/** @param {string} msg */
 function log(msg) {
   const line = `[${ts()}] ${msg}`;
   console.log(line);
@@ -47,27 +67,49 @@ function log(msg) {
 
 // ---- deploy queue (serializa todos los deploys) --------------------------
 let chain = Promise.resolve();
+/**
+ * @param {string} label
+ * @param {() => Promise<void>} fn
+ */
 function enqueue(label, fn) {
   chain = chain.then(fn).catch((e) => log(`deploy ${label} ERROR: ${e.message}${e.stderr ? ' :: ' + String(e.stderr).slice(0, 400) : ''}`));
   return chain;
 }
 
+/**
+ * @typedef {Error & { stdout?: string, stderr?: string }} RunError
+ */
+
+/**
+ * @param {string} cmd
+ * @param {string[]} args
+ * @param {import('child_process').ExecFileOptions} [opts]
+ * @returns {Promise<{ stdout: string, stderr: string }>}
+ */
 function run(cmd, args, opts = {}) {
   return new Promise((resolve, reject) => {
     execFile(cmd, args, { timeout: 180000, maxBuffer: 16 * 1024 * 1024, ...opts }, (err, stdout, stderr) => {
-      if (err) { err.stdout = stdout; err.stderr = stderr; reject(err); }
-      else resolve({ stdout, stderr });
+      if (err) { const e = /** @type {RunError} */ (err); e.stdout = String(stdout); e.stderr = String(stderr); reject(e); }
+      else resolve({ stdout: String(stdout), stderr: String(stderr) });
     });
   });
 }
 // Ejecuta un script cargando nvm explícitamente: el ~/.bashrc de muchos hosts
 // corta temprano en shells no-interactivos y NO deja node/npm/pm2 en el PATH.
 // Sourceamos nvm a mano para que npm/pm2 resuelvan siempre (git es del sistema).
+/**
+ * @param {string} script
+ * @param {string} cwd
+ */
 function bashlc(script, cwd) {
   const nvm = 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" >/dev/null 2>&1; ';
   return run('bash', ['-lc', nvm + script], { cwd });
 }
 
+/**
+ * @param {string} name
+ * @param {RepoConfig} r
+ */
 async function deploy(name, r) {
   if (!r.dir || !r.branch) throw new Error(`repo ${name} has no dir/branch`);
   log(`deploy ${name} → ${r.dir} (branch ${r.branch}${r.unit ? ', unit ' + r.unit : ''})`);
@@ -87,8 +129,13 @@ async function deploy(name, r) {
 }
 
 // ---- HMAC verify ----------------------------------------------------------
+/**
+ * @param {Buffer} rawBody
+ * @param {string | string[] | undefined} header
+ * @returns {boolean}
+ */
 function validSignature(rawBody, header) {
-  if (!header) return false;
+  if (typeof header !== 'string') return false;
   const expected = 'sha256=' + crypto.createHmac('sha256', cfg.secret).update(rawBody).digest('hex');
   const a = Buffer.from(expected);
   const b = Buffer.from(header);
@@ -97,11 +144,13 @@ function validSignature(rawBody, header) {
 
 // ---- HTTP server ----------------------------------------------------------
 const server = http.createServer((req, res) => {
+  /** @param {number} code @param {object} obj */
   const reply = (code, obj) => { res.writeHead(code, { 'content-type': 'application/json' }); res.end(JSON.stringify(obj)); };
 
   if (req.method === 'GET' && req.url === '/health') return reply(200, { ok: true, service: 'cc-deploy-listener' });
-  if (req.method !== 'POST' || req.url.split('?')[0] !== cfg.path) return reply(404, { error: 'not found' });
+  if (req.method !== 'POST' || (req.url || '').split('?')[0] !== cfg.path) return reply(404, { error: 'not found' });
 
+  /** @type {Buffer[]} */
   const chunks = [];
   let size = 0;
   req.on('data', (c) => { size += c.length; if (size > 5 * 1024 * 1024) { req.destroy(); } else chunks.push(c); });
@@ -141,6 +190,6 @@ server.listen(cfg.port, cfg.host, () => {
 // Recarga de config con SIGHUP (sin reiniciar el servicio).
 process.on('SIGHUP', () => {
   try { cfg = loadConfig(); log('config reloaded (SIGHUP)'); }
-  catch (e) { log(`config reload failed: ${e.message}`); }
+  catch (e) { log(`config reload failed: ${/** @type {Error} */ (e).message}`); }
 });
 process.on('SIGTERM', () => { log('SIGTERM, shutting down'); server.close(() => process.exit(0)); setTimeout(() => process.exit(0), 2000); });
