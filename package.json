@@ -13,6 +13,6 @@
     "typescript": "5.9.3"
   },
   "dependencies": {
-    "@dotrino/update": "0.7.0"
+    "@dotrino/update": "0.12.1"
   }
 }
